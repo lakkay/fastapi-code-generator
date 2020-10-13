@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Mapping
 import itertools
 import typer
 from datamodel_code_generator import InputFileType, PythonVersion
@@ -28,7 +28,7 @@ def main(
     return generate_code(input_name, input_text, output_dir, template_dir)
 
 
-def generate_controllers(environment, parsed_object) -> Dict:
+def generate_controllers_code(environment, parsed_object) -> Dict:
     results: Dict[Path, str] = {}
     template_path = Path('controller.jinja2')
     # group by path
@@ -44,7 +44,7 @@ def generate_controllers(environment, parsed_object) -> Dict:
     return results
 
 
-def generate_app(environment, parsed_object) -> str:
+def generate_app_code(environment, parsed_object) -> str:
     template_path = Path('main.jinja2')
     grouped_operations = defaultdict(list)
     for k, g in itertools.groupby(parsed_object.operations, key=lambda x: x.path.strip('/').split('/')[0]):
@@ -82,9 +82,9 @@ def generate_code(
         ),
     )
 
-    controllers = generate_controllers(environment, parsed_object)
+    controllers_code = generate_controllers_code(environment, parsed_object)
 
-    main_app = generate_app(environment, parsed_object)
+    main_app_code = generate_app_code(environment, parsed_object)
 
     timestamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     header = f"""\
@@ -97,14 +97,14 @@ def generate_code(
         controllers_dir.mkdir()
     with controllers_dir.joinpath(Path('__init__.py')).open("wt") as file:
         print('', file=file)
-    for path, code in controllers.items():
+    for path, code in controllers_code.items():
         with controllers_dir.joinpath(path.with_suffix(".py")).open("wt") as file:
             print(header, file=file)
             print("", file=file)
             print(code.rstrip(), file=file)
 
     with output_dir.joinpath(Path('main').with_suffix(".py")).open('wt') as file:
-        print(main_app, file=file)
+        print(main_app_code, file=file)
 
     generate_models(
         input_name=input_name,
@@ -112,6 +112,7 @@ def generate_code(
         input_file_type=InputFileType.OpenAPI,
         output=output_dir.joinpath("models.py"),
         target_python_version=PythonVersion.PY_38,
+        aliases={'schema': 'scheme'},
     )
 
 
