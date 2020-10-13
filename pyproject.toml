@@ -46,6 +46,7 @@ mypy = "*"
 freezegun = "^1.0.0"
 
 #[tool.poetry.extras]
+ipdb = "^0.13.4"
 
 #docs = ["mkdocs", "mkdocs-material"]
 

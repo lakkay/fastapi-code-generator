@@ -17,7 +17,7 @@ from datamodel_code_generator.parser.jsonschema import (
 )
 from pydantic import BaseModel, Field, root_validator
 
-MODEL_PATH = ".models"
+MODEL_PATH = "models"
 
 model_path_var: ContextVar[str] = ContextVar('model_path', default=MODEL_PATH)
 

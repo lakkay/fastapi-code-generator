@@ -18,14 +18,9 @@ fastapi-code-generator uses [datamodel-code-generator](https://github.com/koxuda
 See [documentation](https://koxudaxi.github.io/fastapi-code-generator) for more details.
 
 
-## Installation
-
-To install `fastapi-code-generator`:
-```sh
-$ pip install fastapi-code-generator
-```
-
 ## Usage
+
+Without install `poetry run python -m fastapi_code_generator --input shema.yaml --output output_dir`
 
 The `fastapi-code-generator` command:
 ```
