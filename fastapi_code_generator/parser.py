@@ -199,12 +199,14 @@ class Operation(CachedPropertyModel):
     def get_argument_list(self, snake_case: bool) -> List[Argument]:
         arguments: List[Argument] = []
 
+        # Request args first, to ensure non default params go first
+        if self.request:
+            arguments.append(self.request)
+
         if self.parameters:
             for parameter in self.parameters:
                 arguments.append(self.get_parameter_type(parameter, snake_case))
 
-        if self.request:
-            arguments.append(self.request)
         return arguments
 
     def get_parameter_type(
