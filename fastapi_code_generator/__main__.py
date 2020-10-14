@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional, Mapping
+from typing import Dict, Optional
 import itertools
 import typer
 from datamodel_code_generator import InputFileType, PythonVersion
@@ -15,6 +15,7 @@ from fastapi_code_generator.parser import OpenAPIParser, Operation, ParsedObject
 app = typer.Typer()
 
 BUILTIN_TEMPLATE_DIR = Path(__file__).parent / "template"
+CONTROLLERS_DIR_NAME = 'routers'
 
 
 @app.command()
@@ -54,7 +55,7 @@ def generate_app_code(environment, parsed_object) -> str:
     routers = []
     for name, operations in grouped_operations.items():
         imports.append(Import(
-                            from_='controllers.' + name, import_=name + '_router'
+                            from_=CONTROLLERS_DIR_NAME + '.' + name, import_=name + '_router'
                         ))
 
         routers.append(name + '_router')
@@ -92,7 +93,7 @@ def generate_code(
 #   filename:  {Path(input_name).name}
 #   timestamp: {timestamp}"""
 
-    controllers_dir = output_dir.joinpath('controllers')
+    controllers_dir = output_dir.joinpath(CONTROLLERS_DIR_NAME)
     if not controllers_dir.exists():
         controllers_dir.mkdir()
     with controllers_dir.joinpath(Path('__init__.py')).open("wt") as file:
