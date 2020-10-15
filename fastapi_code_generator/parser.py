@@ -17,7 +17,7 @@ from datamodel_code_generator.parser.jsonschema import (
 )
 from pydantic import BaseModel, Field, root_validator
 
-MODEL_PATH = ".models"
+MODEL_PATH = "models"
 
 model_path_var: ContextVar[str] = ContextVar('model_path', default=MODEL_PATH)
 
@@ -199,12 +199,14 @@ class Operation(CachedPropertyModel):
     def get_argument_list(self, snake_case: bool) -> List[Argument]:
         arguments: List[Argument] = []
 
+        # Request args first, to ensure non default params go first
+        if self.request:
+            arguments.append(self.request)
+
         if self.parameters:
             for parameter in self.parameters:
                 arguments.append(self.get_parameter_type(parameter, snake_case))
 
-        if self.request:
-            arguments.append(self.request)
         return arguments
 
     def get_parameter_type(

@@ -1,0 +1,10 @@
+from fastapi import APIRouter
+
+{{ imports }}
+
+{{ name }}_router = APIRouter()
+{% for operation in operations %}
+@{{ name }}_router.{{operation.type}}('{{operation.snake_case_path}}', response_model={{operation.response}})
+async def {{operation.function_name}}({{operation.snake_case_arguments}}) -> {{operation.response}}:
+    pass
+{% endfor %}
